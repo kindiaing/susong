@@ -18,6 +18,7 @@ USE `susong`;
 
 -- 清除旧表（反向顺序）
 DROP TABLE IF EXISTS `wechat_users`;
+DROP TABLE IF EXISTS `login_logs`;
 DROP TABLE IF EXISTS `audit_logs`;
 DROP TABLE IF EXISTS `operation_logs`;
 DROP TABLE IF EXISTS `promotions`;
@@ -1026,6 +1027,8 @@ CREATE TABLE `audit_logs` (
   `before_data` json DEFAULT NULL COMMENT '修改前数据',
   `after_data` json DEFAULT NULL COMMENT '修改后数据',
   `operator_id` bigint unsigned DEFAULT NULL COMMENT '操作人ID',
+  `ip` varchar(50) DEFAULT NULL COMMENT '操作人IP地址',
+  `user_agent` varchar(255) DEFAULT NULL COMMENT '浏览器/客户端UA',
   `reason` varchar(255) DEFAULT NULL COMMENT '操作原因',
   `relation_type` varchar(50) DEFAULT NULL COMMENT '关联类型',
   `relation_id` bigint unsigned DEFAULT NULL COMMENT '关联ID',
@@ -1036,12 +1039,31 @@ CREATE TABLE `audit_logs` (
   KEY `idx_created_at` (`created_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='审计日志表';
 
+-- 登录日志表
+CREATE TABLE `login_logs` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `user_id` bigint unsigned DEFAULT NULL COMMENT '用户ID',
+  `username` varchar(50) NOT NULL COMMENT '登录账号',
+  `ip` varchar(50) DEFAULT NULL COMMENT 'IP地址',
+  `user_agent` varchar(255) DEFAULT NULL COMMENT '浏览器/客户端UA',
+  `login_type` tinyint unsigned NOT NULL DEFAULT 1 COMMENT '类型：1管理后台，2商家小程序，3司机小程序',
+  `status` tinyint unsigned NOT NULL DEFAULT 1 COMMENT '结果：1成功，0失败',
+  `fail_reason` varchar(100) DEFAULT NULL COMMENT '失败原因（账号不存在/密码错误/账号禁用）',
+  `created_at` timestamp NULL DEFAULT NULL COMMENT '登录时间',
+  PRIMARY KEY (`id`),
+  KEY `idx_user_id` (`user_id`),
+  KEY `idx_username` (`username`),
+  KEY `idx_ip` (`ip`),
+  KEY `idx_created_at` (`created_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='登录日志表';
+
 -- 默认系统配置
 INSERT INTO `system_configs` (`config_key`, `config_value`, `description`, `created_at`, `updated_at`) VALUES
 ('site_name', '本地速送服务平台', '站点名称', NOW(), NOW()),
 ('contact_phone', '15690631151', '客服电话', NOW(), NOW()),
 ('default_delivery_batch', '1', '默认配送批次：1上午，2下午', NOW(), NOW()),
-('weighing_diff_threshold', '20', '称重差异阈值（百分比）', NOW(), NOW());
+('weighing_diff_threshold', '20', '称重差异阈值（百分比）', NOW(), NOW()),
+('audit_retention_days', '90', '审计/日志保留天数：0=永久保留，1-180天，到期每日定时清理', NOW(), NOW());
 
 -- ========================================================
 -- 12. 微信模块

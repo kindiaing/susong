@@ -398,3 +398,44 @@ useEffect(() => {
 | badge 内边距 | 1px 8px（M 档），行内高约 18px |
 | 按钮内边距 | 常规 0 14px；列表操作按钮 0 9px（M 档） |
 | 通知 Drawer 宽度 | 360px，右侧滑出 |
+
+## 7 审计数据清理与上线初始化
+
+### 7.1 审计/日志保留策略
+
+- 配置项：`audit_retention_days`（管理后台 → 系统配置管理 → 审计设置），范围 0–180 天，**0 = 永久保留**，默认 90 天
+- 适用表：`login_logs`、`audit_logs`、`operation_logs`
+- 清理方式：artisan 命令 `php artisan audit:cleanup`，每日定时执行，删除 `created_at` 早于保留天数的数据；配置为 0 时命令直接跳过不清理
+
+### 7.2 定时任务配置
+
+```bash
+# Linux crontab（Laravel 调度器入口，每分钟触发）
+* * * * * cd /项目路径 && php artisan schedule:run >> /dev/null 2>&1
+```
+
+```php
+// app/Console/Kernel.php（Laravel 11+ 为 routes/console.php）
+$schedule->command('audit:cleanup')->dailyAt('03:20');
+```
+
+Windows 开发环境用 `php artisan schedule:work` 常驻代替 crontab。
+
+### 7.3 上线前清空数据库并初始化客户真实数据
+
+开发/测试完成后，正式上线前执行清库：
+
+```bash
+# 方式一：Laravel（推荐）
+php artisan migrate:fresh --seed
+
+# 方式二：SQL 脚本
+mysql -u账号 -p < docs/attach/init.sql
+```
+
+注意事项：
+
+1. 清库后仅保留初始数据：角色、超级管理员账号、默认系统配置
+2. 测试期间产生的商户、商品、订单等数据全部清除，**禁止带入生产**
+3. 真实基础数据由客户/运营按依赖顺序录入：组织主体（供应商/商家/司机/车辆/线路）→ 商品与 SKU → 仓库与初始库存 → 系统配置复核（含审计保留天数）
+4. 生产部署后立即修改默认管理员密码
