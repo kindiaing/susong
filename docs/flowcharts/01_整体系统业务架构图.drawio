@@ -1,0 +1,77 @@
+<mxfile host="Electron" agent="local-script">
+  <diagram name="整体系统业务架构图" id="整体系统业务架构图">
+    <mxGraphModel dx="1414" dy="841" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1200" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#1565C0;fontSize=12;fontFamily=Helvetica;verticalAlign=middle;align=center;" value="微信小程序商家端 （商家下单）" vertex="1">
+          <mxGeometry height="60" width="140" x="40" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#1565C0;fontSize=12;fontFamily=Helvetica;verticalAlign=middle;align=center;" value="管理后台 Web 端 （运营/财务/仓库）" vertex="1">
+          <mxGeometry height="60" width="140" x="220" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#1565C0;fontSize=12;fontFamily=Helvetica;verticalAlign=middle;align=center;" value="微信小程序司机端 （配送签收）" vertex="1">
+          <mxGeometry height="60" width="140" x="400" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#E65100;fontSize=12;fontFamily=Helvetica;verticalAlign=middle;align=center;" value="Laravel API 服务层 （Sanctum 认证 / 业务逻辑）" vertex="1">
+          <mxGeometry height="60" width="220" x="180" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="6" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E5F5;strokeColor=#6A1B9A;fontSize=12;fontFamily=Helvetica;verticalAlign=middle;align=center;" value="MySQL 8.0 主数据库" vertex="1">
+          <mxGeometry height="60" width="120" x="90" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="7" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E5F5;strokeColor=#6A1B9A;fontSize=12;fontFamily=Helvetica;verticalAlign=middle;align=center;" value="Redis 缓存+队列+会话" vertex="1">
+          <mxGeometry height="60" width="120" x="230" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="8" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E5F5;strokeColor=#6A1B9A;fontSize=12;fontFamily=Helvetica;verticalAlign=middle;align=center;" value="异步队列 消息/报表/推送" vertex="1">
+          <mxGeometry height="60" width="120" x="380" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="9" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E0F2F1;strokeColor=#00695C;fontSize=12;fontFamily=Helvetica;verticalAlign=middle;align=center;" value="腾讯地图 API 轨迹/导航/线路" vertex="1">
+          <mxGeometry height="60" width="120" x="90" y="470" as="geometry" />
+        </mxCell>
+        <mxCell id="10" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E0F2F1;strokeColor=#00695C;fontSize=12;fontFamily=Helvetica;verticalAlign=middle;align=center;" value="微信支付 充值/结算" vertex="1">
+          <mxGeometry height="60" width="120" x="230" y="470" as="geometry" />
+        </mxCell>
+        <mxCell id="11" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E0F2F1;strokeColor=#00695C;fontSize=12;fontFamily=Helvetica;verticalAlign=middle;align=center;" value="OSS/本地存储 图片/凭证" vertex="1">
+          <mxGeometry height="60" width="120" x="370" y="470" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" edge="1" parent="1" source="2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#666666;fontSize=11;" target="5" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#666666;fontSize=11;" target="5" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#666666;fontSize=11;" target="5" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#666666;fontSize=11;" target="6" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#666666;fontSize=11;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" target="7" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#666666;fontSize=11;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" target="8" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#666666;fontSize=11;" target="9" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="290" y="410" />
+              <mxPoint x="150" y="410" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e8" edge="1" parent="1" source="5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#666666;fontSize=11;" target="10" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e9" edge="1" parent="1" source="5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#666666;fontSize=11;" target="11" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="290" y="410" />
+              <mxPoint x="430" y="410" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
