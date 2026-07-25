@@ -116,39 +116,54 @@
 
 ### 5.1 后端
 
-| 技术 | 版本 | 说明 |
-| :--- | :--- | :--- |
-| Laravel | 13.x | 主框架 |
-| PHP | 8.3 | 运行环境 |
-| MySQL | 8.0 | 主数据库 |
-| Redis | 7.x | 缓存 + 队列 + 会话 |
-| Laravel Sanctum | 最新 | API Token 认证 |
-| Spatie Permission | 最新 | RBAC 角色权限 |
-| Laravel Queue | 内置 | 异步任务 |
-| Laravel Reverb | 可选 | 实时推送（WebSocket） |
+| 技术 | 版本 | 说明 | 使用场景（匹配功能） |
+| :--- | :--- | :--- | :--- |
+| Laravel | 13.x | 主框架 | API 路由、业务逻辑、数据校验、定时任务 |
+| PHP | 8.3 | 运行环境 | 匹配 Laravel 13 要求 |
+| MySQL | 8.0 | 主数据库 | 订单、库存、结算等事务数据；JSON 字段存扩展属性 |
+| Redis | 7.x | 缓存 + 队列 + 会话 | ① 缓存：商品列表、系统配置、字典数据 ② 队列：订单通知、报表导出、批量任务 ③ 会话/Token：管理后台登录态 ④ 分布式锁：库存扣减防超卖 ⑤ 限流：API 频率限制 |
+| Laravel Sanctum | 最新 | API Token 认证 | 商家端小程序、管理后台 SPA 登录认证 |
+| Spatie Permission | 最新 | RBAC 角色权限 | 菜单/按钮级权限，角色动态渲染侧边栏 |
+| Laravel Queue | 内置 | 异步任务 | 短信/消息通知、Excel 导出、对账任务 |
+| Laravel Reverb | 可选 | 实时推送（WebSocket） | 订单状态变更、配送轨迹实时推送 |
 
 ### 5.2 管理后台 Web 端
 
-| 技术 | 说明 |
-| :--- | :--- |
-| React | 18.x |
-| TypeScript | 类型安全 |
-| Vite | 构建工具 |
-| Tailwind CSS | 原子化样式 |
-| shadcn/ui | UI 组件库 |
-| TanStack Table | 复杂表格 |
-| TanStack Query | 数据获取与缓存 |
-| Zustand | 轻量状态管理 |
-| React Router v6 | 页面路由 |
-| Recharts / ECharts | 图表统计 |
-| 腾讯地图 JS API | 配送轨迹、线路规划 |
+| 技术 | 说明 | 使用场景（匹配功能） |
+| :--- | :--- | :--- |
+| React | 18.x | 管理后台单页应用（SPA） |
+| TypeScript | 类型安全 | 与后端 API 数据结构对齐，减少联调错误 |
+| Vite | 构建工具 | 开发热更新、生产打包 |
+| Tailwind CSS | 原子化样式 | 全局样式基座，承载主题 token |
+| shadcn/ui | UI 组件库 | 表单、弹窗、下拉等全部基础组件；基于 CSS 变量 + 主题 token 定制（详见 5.4） |
+| TanStack Table | 复杂表格 | 订单、库存、财务、拣货等所有列表页（虚拟滚动、筛选、排序） |
+| TanStack Query | 数据获取与缓存 | 列表/详情数据请求、乐观更新、后台同步 |
+| Zustand | 轻量状态管理 | 全局用户态、购物车（如有 Web 端）、跨页面共享状态 |
+| React Router v6 | 页面路由 | 管理后台页面级路由、懒加载 |
+| Recharts / ECharts | 图表统计 | 财务报表、销售趋势、配送统计图表 |
+| 腾讯地图 JS API | 配送轨迹、线路规划 | 配送调度地图、司机轨迹回放 |
 
 ### 5.3 微信小程序
 
-| 端 | 技术 | 说明 |
+| 端 | 技术 | 使用场景（匹配功能） |
 | :--- | :--- | :--- |
-| 商家端 | 原生微信小程序 | 智能搜索下单 |
-| 司机端 | 原生微信小程序 | 配送任务、签收 |
+| 商家端 | Taro 4 + React + TypeScript | 智能搜索下单、购物车、订单查看、签收确认、充值；与管理后台复用类型/API 层 |
+| 司机端 | 原生微信小程序 | 配送任务接收、导航、轨迹上报、拍照签收、冷链温度记录 |
+
+### 5.4 前端主题规范（shadcn/ui）
+
+管理后台基于 shadcn/ui 的 **CSS 变量 + 主题 token** 机制统一定制主题，整体风格为**小圆角、小字体、小按钮**；全局反馈与通知统一使用 Sonner + 右侧 Drawer：
+
+1. **主题机制**：shadcn/ui 组件全部读取 CSS 变量（`--background`、`--primary`、`--radius` 等），Tailwind 通过 token 映射（如 `borderRadius.lg = var(--radius)`）消费这些变量，改一处变量全局生效
+2. **基础颜色可配置**：在 CSS 变量层直接修改 HSL 色值即可切换主题基色（主色、辅色、成功/警告/错误/信息语义色），支持 `:root` 与 `.dark` 双主题；项目默认使用蓝、橙、黄、绿、红配色，避免页面单调
+3. **圆角尺度可配置**：通过 `--radius` 单变量控制全局圆角基准，Tailwind  token 派生 `rounded-lg/md/sm`，卡片、按钮、输入框、弹窗、Drawer 统一小圆角
+4. **小圆角**：`--radius: 0.25rem`（4px）
+5. **小字体**：默认 M 档——正文/按钮 14px，辅助/表格/badge 13px，区块标题 16px，页面标题 19px，统计数字 22px，信息密度优先（S/L 档完整数值见 Setup 6.5.2）
+6. **小按钮**：默认 M 档——按钮高 32px、列表操作按钮高 26px、字号 14px（S 档 30/24px，L 档 36/30px），与表格/表单的紧凑布局匹配
+7. **轻提醒（Toast）**：统一使用 Sonner 组件，代替浏览器 alert 或原生 toast，保持样式与动效一致
+8. **通知中心**：站内消息/系统通知统一采用右侧滑出的 Drawer 面板展示，入口位于顶部导航栏，宽度默认 360px，小圆角
+9. **尺寸档位可配置**：字体与图标支持 S / M / L 三档（**系统默认 M 档**：正文 14px、图标 16px、按钮 32px）；在 `.env` 配置 `VITE_UI_SIZE=S|M|L` 即可一键同步修改系统所有字体、图标与按钮尺寸，实现上通过 `<html data-size>` 切换 CSS 尺寸变量全站生效；开发**优先组件化**，按钮/图标/Block/Badge/Alert/表格封装为全局组件（AppButton、AppIcon、StatBlock、StatusBadge、AppAlert、AppTable）复用，组件尺寸引用 token、禁止写死 px；完整颜色与尺寸数值见《05 Setup 安装部署配置手册》第 6.5、6.6 节（规范自包含，不依赖任何示例文件）
+10. 具体配置代码见《05 Setup 安装部署配置手册》第 6 节「管理后台主题配置」
 
 ---
 
